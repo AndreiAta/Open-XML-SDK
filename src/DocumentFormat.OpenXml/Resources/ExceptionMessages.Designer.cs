@@ -376,6 +376,15 @@ namespace DocumentFormat.OpenXml {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The specified InternalRelationship is not referenced by this part..
+        /// </summary>
+        internal static string InternalRelationshipIsNotReferenced {
+            get {
+                return ResourceManager.GetString("InternalRelationshipIsNotReferenced", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The content type of the part is invalid. The expected content type is: {0}..
         /// </summary>
         internal static string InvalidContentTypePart {
@@ -573,6 +582,15 @@ namespace DocumentFormat.OpenXml {
         internal static string NoSpecifiedHyperlinkRelationship {
             get {
                 return ResourceManager.GetString("NoSpecifiedHyperlinkRelationship", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No internal relationship with the specified ID was found..
+        /// </summary>
+        internal static string NoSpecifiedInternalRelationship {
+            get {
+                return ResourceManager.GetString("NoSpecifiedInternalRelationship", resourceCulture);
             }
         }
         

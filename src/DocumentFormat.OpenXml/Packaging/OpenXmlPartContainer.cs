@@ -327,6 +327,184 @@ namespace DocumentFormat.OpenXml.Packaging
 
         #endregion
 
+        #region methods to operate ExternalRelationship
+
+        /// <summary>
+        /// Gets all external relationships.
+        /// Hyperlink relationships are not included, use HyperlinkRelationship property to enumerate hyperlink relationships.
+        /// </summary>
+        public IEnumerable<InternalRelationship> InternalRelationships
+        {
+            get
+            {
+                ThrowIfObjectDisposed();
+                return ReferenceRelationshipList.OfType<InternalRelationship>();
+            }
+        }
+
+        /// <summary>
+        /// Adds an internal relationship.
+        /// Do not add hyperlink relationships through this method. Use AddHyperlinkRelationship() instead.
+        /// </summary>
+        /// <param name="relationshipType">The relationship type.</param>
+        /// <param name="externalUri">The external URI.</param>
+        /// <returns>An InternalRelationship with the relationship ID. </returns>
+        /// <exception cref="ArgumentNullException">Thrown when "relationshipType" or the "externalUri" is null reference.</exception>
+        public InternalRelationship AddInternalRelationship(string relationshipType, Uri externalUri)
+        {
+            ThrowIfObjectDisposed();
+
+            if (relationshipType == null)
+            {
+                throw new ArgumentNullException(nameof(relationshipType));
+            }
+
+            if (externalUri == null)
+            {
+                throw new ArgumentNullException(nameof(externalUri));
+            }
+
+            if (relationshipType == HyperlinkRelationship.RelationshipTypeConst)
+            {
+                throw new InvalidOperationException(ExceptionMessages.UseAddHyperlinkRelationship);
+            }
+
+            var relationship = CreateRelationship(externalUri, TargetMode.Internal, relationshipType);
+
+            var internalRelationship = new InternalRelationship(relationship.TargetUri, relationship.RelationshipType, relationship.Id);
+            internalRelationship.Container = this;
+            ReferenceRelationshipList.AddLast(internalRelationship);
+            return internalRelationship;
+        }
+
+        /// <summary>
+        /// Adds an internal relationship.
+        /// Do not add hyperlink relationships through this method. Use AddHyperlinkRelationship() instead.
+        /// </summary>
+        /// <param name="relationshipType">The relationship type.</param>
+        /// <param name="externalUri">The external URI.</param>
+        /// <param name="id">The desired relationship ID. </param>
+        /// <returns>An InternalRelationship with the relationship ID. </returns>
+        /// <exception cref="ArgumentNullException">Thrown when "relationshipType" or the "externalUri" is null reference.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when the relationship type is hyperlink relationship type (http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink). </exception>
+        public InternalRelationship AddInternalRelationship(string relationshipType, Uri externalUri, string id)
+        {
+            ThrowIfObjectDisposed();
+
+            if (relationshipType == null)
+            {
+                throw new ArgumentNullException(nameof(relationshipType));
+            }
+
+            if (externalUri == null)
+            {
+                throw new ArgumentNullException(nameof(externalUri));
+            }
+
+            if (id == null)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
+
+            if (relationshipType == HyperlinkRelationship.RelationshipTypeConst)
+            {
+                throw new InvalidOperationException(ExceptionMessages.UseAddHyperlinkRelationship);
+            }
+
+            var relationship = CreateRelationship(externalUri, TargetMode.Internal, relationshipType, id);
+
+            var internalRelationship = new InternalRelationship(relationship.TargetUri, relationship.RelationshipType, relationship.Id);
+            internalRelationship.Container = this;
+            ReferenceRelationshipList.AddLast(internalRelationship);
+            return internalRelationship;
+        }
+
+        /// <summary>
+        /// Deletes the specified internal relationship.
+        /// </summary>
+        /// <param name="internalRelationship">The internal relationship to be deleted.</param>
+        /// <exception cref="ArgumentNullException">Thrown when "internalRelationship" is null reference.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when the internal relationship is not referenced by this part.</exception>
+        public void DeleteInternalRelationship(InternalRelationship internalRelationship)
+        {
+            ThrowIfObjectDisposed();
+
+            if (internalRelationship == null)
+            {
+                throw new ArgumentNullException(nameof(internalRelationship));
+            }
+
+            if (internalRelationship.Id == null || internalRelationship.Container != this)
+            {
+                throw new InvalidOperationException(ExceptionMessages.InternalRelationshipIsNotReferenced);
+            }
+
+            if (ReferenceRelationshipList.Contains(internalRelationship))
+            {
+                ReferenceRelationshipList.Remove(internalRelationship);
+                DeleteRelationship(internalRelationship.Id);
+                internalRelationship.Container = null;
+            }
+            else
+            {
+                throw new InvalidOperationException(ExceptionMessages.InternalRelationshipIsNotReferenced);
+            }
+        }
+
+        /// <summary>
+        /// Deletes the specified InternalRelationship.
+        /// </summary>
+        /// <param name="id">The relationship ID of the InternalRelationship.</param>
+        /// <exception cref="ArgumentNullException">Thrown when the "id" parameter is null.</exception>
+        /// <exception cref="KeyNotFoundException">Thrown when there is no InternalRelationship with the specified relationship ID.</exception>
+        public void DeleteInternalRelationship(string id)
+        {
+            if (id == null)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
+
+            foreach (var internalRelationship in ReferenceRelationshipList.OfType<InternalRelationship>())
+            {
+                if (internalRelationship.Id == id)
+                {
+                    ReferenceRelationshipList.Remove(internalRelationship);
+                    DeleteRelationship(internalRelationship.Id);
+                    internalRelationship.Container = null;
+                    return;
+                }
+            }
+
+            throw new KeyNotFoundException(ExceptionMessages.NoSpecifiedInternalRelationship);
+        }
+
+        /// <summary>
+        /// Gets the specified InternalRelationship.
+        /// </summary>
+        /// <param name="id">The relationship ID of the InternalRelationship.</param>
+        /// <returns>Returns the InternalRelationship which has the relationship ID. </returns>
+        /// <exception cref="ArgumentNullException">Thrown when the "id" parameter is null.</exception>
+        /// <exception cref="KeyNotFoundException">Thrown when there is no InternalRelationship with the specified relationship ID.</exception>
+        public InternalRelationship GetInternalRelationship(string id)
+        {
+            if (id == null)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
+
+            foreach (var internalRelationship in ReferenceRelationshipList.OfType<InternalRelationship>())
+            {
+                if (internalRelationship.Id == id)
+                {
+                    return internalRelationship;
+                }
+            }
+
+            throw new KeyNotFoundException(ExceptionMessages.NoSpecifiedInternalRelationship);
+        }
+
+        #endregion
+
         #region methods to operate HyperlinkRelationship
 
         /// <summary>

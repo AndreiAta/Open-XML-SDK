@@ -177,6 +177,9 @@
   <data name="ExternalRelationshipIsNotReferenced" xml:space="preserve">
     <value>The specified ExternalRelationship is not referenced by this part.</value>
   </data>
+  <data name="InternalRelationshipIsNotReferenced" xml:space="preserve">
+    <value>The specified InternalRelationship is not referenced by this part.</value>
+  </data>
   <data name="FileFormatNotSupported" xml:space="preserve">
     <value>The specified FileFormatVersions parameter has an invalid value: {0}</value>
   </data>
@@ -251,6 +254,9 @@
   </data>
   <data name="NoSpecifiedExternalRelationship" xml:space="preserve">
     <value>No external relationship with the specified ID was found.</value>
+  </data>
+  <data name="NoSpecifiedInternalRelationship" xml:space="preserve">
+    <value>No internal relationship with the specified ID was found.</value>
   </data>
   <data name="NoSpecifiedHyperlinkRelationship" xml:space="preserve">
     <value>No hyperlink relationship with the specified ID was found.</value>
